@@ -2,13 +2,17 @@ import requests, urllib
 from textblob import TextBlob
 from textblob.sentiments import NaiveBayesAnalyzer
 
+
 APP_ACCESS_TOKEN = '4388624854.d5a4b3a.327fa44e9db443e598e2d4066d92ff92'
 #Token Owner : AVinstaBot.main
 #Sandbox Users : AVinstaBot.test0, AVinstaBot.test1, AVinstaBot.test2...... AVinstaBot.test10
 
 BASE_URL = 'https://api.instagram.com/v1/'
 
+
 # Function declaration to get your own info
+
+
 
 def self_info():
     request_url = (BASE_URL + 'users/self/?access_token=%s') % (APP_ACCESS_TOKEN)
@@ -26,10 +30,14 @@ def self_info():
     else:
         print 'Status code other than 200 received!'
 
+
+
 # Function declaration to get the ID of a user by username
 
-def get_user_id(princechauhan3133):
-    request_url = (BASE_URL + 'users/search?q=%s&access_token=%s') % (princechauhan3133, APP_ACCESS_TOKEN)
+
+
+def get_user_id(insta_username):
+    request_url = (BASE_URL + 'users/search?q=%s&access_token=%s') % (insta_username, APP_ACCESS_TOKEN)
     print 'GET request url : %s' % (request_url)
     user_info = requests.get(request_url).json()
 
@@ -42,10 +50,14 @@ def get_user_id(princechauhan3133):
         print 'Status code other than 200 received!'
         exit()
 
+
+
 # Function declaration to get the info of a user by username
 
-def get_user_info(princechauhan3133):
-    user_id = get_user_id(princechauhan3133)
+
+
+def get_user_info(insta_username):
+    user_id = get_user_id(insta_username)
     if user_id == None:
         print 'User does not exist!'
         exit()
@@ -64,7 +76,11 @@ def get_user_info(princechauhan3133):
     else:
         print 'Status code other than 200 received!'
 
+
+
 # Function declaration to get your recent post
+
+
 
 def get_own_post():
     request_url = (BASE_URL + 'users/self/media/recent/?access_token=%s') % (APP_ACCESS_TOKEN)
@@ -82,10 +98,14 @@ def get_own_post():
     else:
         print 'Status code other than 200 received!'
 
+
+
 # Function declaration to get the recent post of a user by username
 
-def get_user_post(princechauhan3133):
-    user_id = get_user_id(princechauhan3133)
+
+
+def get_user_post(insta_username):
+    user_id = get_user_id(insta_username)
     if user_id == None:
         print 'User does not exist!'
         exit()
@@ -108,8 +128,8 @@ def get_user_post(princechauhan3133):
 # Function declaration to get the ID of the recent post of a user by username
 
 
-def get_post_id(princechauhan3133):
-    user_id = get_user_id(princechauhan3133)
+def get_post_id(insta_username):
+    user_id = get_user_id(insta_username)
     if user_id == None:
         print 'User does not exist!'
         exit()
@@ -134,8 +154,8 @@ def get_post_id(princechauhan3133):
 
 
 
-def like_a_post(princechauhan3133):
-    media_id = get_post_id(princechauhan3133)
+def like_a_post(insta_username):
+    media_id = get_post_id(insta_username)
     request_url = (BASE_URL + 'media/%s/likes') % (media_id)
     payload = {"access_token": APP_ACCESS_TOKEN}
     print 'POST request url : %s' % (request_url)
@@ -150,8 +170,8 @@ def like_a_post(princechauhan3133):
 # Function declaration to make a comment on the recent post of the user
 
 
-def post_a_comment(princechauhan3133):
-    media_id = get_post_id(princechauhan3133)
+def post_a_comment(insta_username):
+    media_id = get_post_id(insta_username)
     comment_text = raw_input("Your comment: ")
     payload = {"access_token": APP_ACCESS_TOKEN, "text" : comment_text}
     request_url = (BASE_URL + 'media/%s/comments') % (media_id)
@@ -168,24 +188,24 @@ def post_a_comment(princechauhan3133):
 # Function declaration to get the liked by user
 
 
-def liked_by_user(princechauhan3133):
-    media_id = get_post_id(princechauhan3133)
+def liked_by_user(insta_username):
+    media_id = get_post_id(insta_username)
     print "Get request URL:" + ((BASE_URL + "users/self/media/liked?access_token=%s") % (APP_ACCESS_TOKEN))
     liked = requests.get((BASE_URL + "users/self/media/liked?access_token=%s") % (APP_ACCESS_TOKEN)).json()
     print liked["data"][0]["id"]
 
 # Function declaration to get the comments
 
-def get_the_comments(princechauhan3133):
-    media_id = get_post_id(princechauhan3133)
+def get_the_comments(insta_username):
+    media_id = get_post_id(insta_username)
     print "Get request URL:" + ((BASE_URL + "media/%s/comments?access_token=%s") % (media_id, APP_ACCESS_TOKEN))
     comments = requests.get((BASE_URL + "media/%s/comments?access_token=%s") % (media_id, APP_ACCESS_TOKEN)).json()
     print comments["data"]
 
 # Function declaration to make delete negative comments from the recent post
 
-def delete_negative_comment(princechauhan3133):
-    media_id = get_post_id(princechauhan3133)
+def delete_negative_comment(insta_username):
+    media_id = get_post_id(insta_username)
     request_url = (BASE_URL + 'media/%s/comments/?access_token=%s') % (media_id, APP_ACCESS_TOKEN)
     print 'GET request url : %s' % (request_url)
     comment_info = requests.get(request_url).json()
