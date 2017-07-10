@@ -165,6 +165,25 @@ def like_a_post(insta_username):
     else:
         print 'Your like was unsuccessful. Try again!'
 
+# Get likes list
+
+def get_like_list(insta_username):
+        media_id = get_post_id(insta_username)
+        request_url = (BASE_URL + 'media/%s/likes?access_token=%s') % (media_id, APP_ACCESS_TOKEN)
+
+        print 'GET request url : %s' % (request_url)
+        like_list = requests.get(request_url).json()
+        print like_list
+
+        if like_list['meta']['code'] == 200:
+            if len(like_list['data']):
+                for i in range(0, len(like_list['data'])):
+                    print 'Username: %s' % (like_list['data'][i]['username'])
+
+            else:
+                print 'There is no like for this user media!'
+        else:
+            print 'Query was unsuccessful!'
 
 
 # Function declaration to make a comment on the recent post of the user
@@ -240,44 +259,48 @@ def start_bot():
         print '\n'
         print 'Hey! Welcome to instaBot!'
         print 'Here are your menu options:'
-        print "a.Get your own details\n"
-        print "b.Get details of a user by username\n"
-        print "c.Get your own recent post\n"
-        print "d.Get the recent post of a user by username\n"
-        print "e.Get a list of people who have liked the recent post of a user\n"
-        print "f.Like the recent post of a user\n"
-        print "g.Get a list of comments on the recent post of a user\n"
-        print "h.Make a comment on the recent post of a user\n"
-        print "i.Delete negative comments from the recent post of a user\n"
-        print "j.Exit"
+        print "A.Get your own details\n"
+        print "B.Get details of a user by username\n"
+        print "C.Get your own recent post\n"
+        print "D.Get the recent post of a user by username\n"
+        print "E.Get a list of people who have liked the recent post of a user\n"
+        print "F.Like the recent post of a user\n"
+        print "G.Get a list of comments on the recent post of a user\n"
+        print "H.Make a comment on the recent post of a user\n"
+        print "I.Delete negative comments from the recent post of a user\n"
+        print "J.Get a list of people who have liked the recent post of a user\n"
+        print "K.Exit\n"
 
         choice = raw_input("Enter you choice: ")
-        if choice == "a":
+        if choice == "A":
             self_info()
-        elif choice == "b":
+        elif choice == "B":
             insta_username = raw_input("Enter the username of the user: ")
             get_user_info(insta_username)
-        elif choice == "c":
+        elif choice == "C":
             get_own_post()
-        elif choice == "d":
+        elif choice == "D":
             insta_username = raw_input("Enter the username of the user: ")
             get_user_post(insta_username)
-        elif choice=="e":
+        elif choice=="E":
            insta_username = raw_input("Enter the username of the user: ")
            liked_by_user(insta_username)
-        elif choice=="f":
+        elif choice=="F":
            insta_username = raw_input("Enter the username of the user: ")
            like_a_post(insta_username)
-        elif choice=="g":
+        elif choice=="G":
            insta_username = raw_input("Enter the username of the user: ")
            get_the_comments(insta_username)
-        elif choice=="h":
+        elif choice=="H":
            insta_username = raw_input("Enter the username of the user: ")
            post_a_comment(insta_username)
-        elif choice=="i":
+        elif choice=="I":
            insta_username = raw_input("Enter the username of the user: ")
            delete_negative_comment(insta_username)
-        elif choice == "j":
+        elif choice == "J":
+            insta_username = raw_input("Enter the username of the user: ")
+            get_like_list(insta_username)
+        elif choice=="K":
             exit()
         else:
             print "wrong choice"
