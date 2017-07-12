@@ -292,7 +292,7 @@ for user in user_lis:
             if len(user_media['data']):
                 image_name = user_media['data'][0]['id'] + '.jpeg'
                 image_url = user_media['data'][0]['images']['standard_resolution']['url']
-                model = app.models.get('food-items-v1.0')
+                model = app.models.get('travel-v1.0')
                 response = model.predict_by_url(url=image_url)
                 #data fetched through concepts and stored in response
                 for x in response['outputs'][0]['data']['concepts']:
