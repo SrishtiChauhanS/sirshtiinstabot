@@ -1,11 +1,18 @@
-import requests, urllib
+import requests
+import urllib
 from textblob import TextBlob
 from textblob.sentiments import NaiveBayesAnalyzer
 
+import termcolor
+
+import json
+from wordcloud import WordCloud, STOPWORDS
+import matplotlib.pyplot as plt
+from clarifai.rest import ClarifaiApp
 
 APP_ACCESS_TOKEN = '4388624854.d5a4b3a.327fa44e9db443e598e2d4066d92ff92'
-#Token Owner : AVinstaBot.main
-#Sandbox Users : AVinstaBot.test0, AVinstaBot.test1, AVinstaBot.test2...... AVinstaBot.test10
+#Token Owner : srishtichauhan1196.main
+#list_of_sandbox  : ['princechauhan3133','ananyagupta5623','ysyuvraj079']
 
 BASE_URL = 'https://api.instagram.com/v1/'
 
@@ -254,22 +261,86 @@ def delete_negative_comment(insta_username):
         print 'Status code other than 200 received!'
 
 
+#define array
+#defining dictionary and stored imageurl and words
+ar = []
+my_dictionary = {
+    'imageurl': None,
+    'words': ''
+
+}
+user_lis = ['princechauhan3133', 'ananyagupta5623']
+
+#function to show the subtrend of a travel and plot through wordcloud
+#objective to show subtrend of any activities or event and plot through word cloud
+#defining clarifaiApp with generated key
+app = ClarifaiApp(api_key='de07e73879da40b4a65dee60367a0626')
+
+# get the general model
+model = app.models.get('travel-v1.0')
+for user in user_lis:
+    def get_users_post(user):
+        user_id = get_user_id(user)
+        if user_id == None:
+            print 'User does not exist!'
+            exit()
+        request_url = (BASE_URL + 'users/%s/media/recent/?access_token=%s') % (user_id, APP_ACCESS_TOKEN)
+        print 'GET request url : %s' % (request_url)
+        user_media = requests.get(request_url).json()
+
+        if user_media['meta']['code'] == 200:
+            if len(user_media['data']):
+                image_name = user_media['data'][0]['id'] + '.jpeg'
+                image_url = user_media['data'][0]['images']['standard_resolution']['url']
+                model = app.models.get('food-items-v1.0')
+                response = model.predict_by_url(url=image_url)
+                #data fetched through concepts and stored in response
+                for x in response['outputs'][0]['data']['concepts']:
+                    #print name stored in value
+                    print x['name'], x['value']
+                    #if value of x greater than .7
+                    if x['value'] > .7:
+                        #string show the value of x in name
+                        strr = x['name']
+                        #using temp variable to fetch words stored in dictionary
+                        temp = my_dictionary['words']
+                        temp = temp + ' ' + str(strr)
+                        my_dictionary['words'] = temp
+                        #string stored in a dictionary as a words
+                String = my_dictionary['words']
+                print
+                wordcloud = WordCloud(stopwords=STOPWORDS, background_color='white', width=1200, height=1000).generate(
+                    String)
+                plt.imshow(wordcloud)
+                plt.axis('off')
+                plt.show()
+                urllib.urlretrieve(image_url, image_name)
+            else:
+                print "error"
+
+        else:
+            print "error"
+
+
+
+
 def start_bot():
     while True:
         print '\n'
-        print 'Hey! Welcome to instaBot!'
-        print 'Here are your menu options:'
-        print "A.Get your own details\n"
-        print "B.Get details of a user by username\n"
-        print "C.Get your own recent post\n"
-        print "D.Get the recent post of a user by username\n"
-        print "E.Get a list of people who have liked the recent post of a user\n"
-        print "F.Like the recent post of a user\n"
-        print "G.Get a list of comments on the recent post of a user\n"
-        print "H.Make a comment on the recent post of a user\n"
-        print "I.Delete negative comments from the recent post of a user\n"
-        print "J.Get a list of people who have liked the recent post of a user\n"
-        print "K.Exit\n"
+        print termcolor.colored('Hey! Welcome to instaBot!','red')
+        print termcolor.colored('Here are your menu options:','blue')
+        print termcolor.colored("A.Get your own details\n",'magenta')
+        print termcolor.colored("B.Get details of a user by username\n",'magenta')
+        print termcolor.colored("C.Get your own recent post\n",'magenta')
+        print termcolor.colored("D.Get the recent post of a user by username\n",'magenta')
+        print termcolor.colored("E.Get a list of people who have liked the recent post of a user\n",'magenta')
+        print termcolor.colored("F.Like the recent post of a user\n",'magenta')
+        print termcolor.colored("G.Get a list of comments on the recent post of a user\n",'magenta')
+        print termcolor.colored("H.Make a comment on the recent post of a user\n",'magenta')
+        print termcolor.colored("I.Delete negative comments from the recent post of a user\n",'magenta')
+        print termcolor.colored("J.Get a list of people who have liked the recent post of a user\n",'magenta')
+        print termcolor.colored("K.Show Subtrends of travel \n",'magenta')
+        print termcolor.colored("L.Exit\n",'cyan')
 
         choice = raw_input("Enter you choice: ")
         if choice == "A":
@@ -301,8 +372,10 @@ def start_bot():
             insta_username = raw_input("Enter the username of the user: ")
             get_like_list(insta_username)
         elif choice=="K":
+            get_users_post(user)
+        elif choice=="L":
             exit()
         else:
-            print "wrong choice"
+            print termcolor.colored("Sorry, wrong choice. Try Again",'red')
 
 start_bot()
